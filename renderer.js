@@ -53,3 +53,58 @@ function readFolder(path) {
 function openFile(path) {
     shell.openItem(path);
 }
+
+
+function setupDragSpot(){
+  var holder = document.getElementById('drag-file');
+
+  holder.ondragover = () => {
+      return false;
+  };
+
+  holder.ondragleave = () => {
+      return false;
+  };
+
+  holder.ondragend = () => {
+      return false;
+  };
+
+  holder.ondrop = (e) => {
+      e.preventDefault();
+
+      //Dynamically add <ul> tags to the file-list div
+      document.getElementById('file-list').innerHTML = `<ul id="display-files"></ul>`;
+
+      // Our list of file names
+      var file_list = [];
+
+      for (let f of e.dataTransfer.files) {
+          document.getElementById('display-files').innerHTML += `<li><span class="fa fa-file"></span> ${f.name}</li>`;
+          file_list.push(f.name);
+      }
+      parseFilenames(file_list);
+
+      return false;
+  };
+}
+
+function parseFilenames(file_list){
+  // The regex we use to try and find the episode number details
+  var episodeRegex = 'S\\d{1,2}E\\d{1,2}';
+  for (let file of file_list) {
+    console.log(file);
+    let episodeMatch = file.match(episodeRegex);
+    if (episodeMatch == null) {
+      console.log(`No episode details found for: ${file}`);
+      continue;
+    }
+    // Then we try to find the show name, which usually comes before the episode number
+    // Get the string preceeding the episode number
+    let tvShow = file.slice(0,episodeMatch['index']);
+    // Remove any non alphanumeric characters
+    let tvShowWithWhitespace = tvShow.replace(/[\W_]+/g, " ");
+
+    console.log(`Found tv show ${tvShowWithWhitespace} with episode number ${episodeMatch[0]}`);
+  }
+}

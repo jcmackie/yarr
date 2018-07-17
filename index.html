@@ -7,59 +7,22 @@
     <link rel="stylesheet" type="text/css" href="node_modules/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src='./renderer.js'></script>
-    <script>
-       /*
-       We create an IIFE (immediately invoked function expression) that will be executed immediately the app loads.
-       This brings the need to load the script above because we are loading a function in that script.
-       If we don't load it, the function below will throw a ' call to undefined function' error
-        */
-       (function () {
-           //the root folder will be our default path
-           readFolder('/');
-       })();
-   </script>
-   <style>
 
-  </style>
   </head>
   <body>
     <h1>Yet Another Renamer (Really!?)</h1>
 
-    <div id="listed-files"></div>
-
     <div id="drag-file">
       <p>Drag your files here</p>
     </div>
+    <div id="file-list"></div>
 
     <script>
       (function () {
-          var holder = document.getElementById('drag-file');
-
-          console.log("this happened");
-
-          holder.ondragover = () => {
-              return false;
-          };
-
-          holder.ondragleave = () => {
-              return false;
-          };
-
-          holder.ondragend = () => {
-              return false;
-          };
-
-          holder.ondrop = (e) => {
-              e.preventDefault();
-
-              for (let f of e.dataTransfer.files) {
-                  console.log('File(s) you dragged here: ', f.path)
-              }
-
-              return false;
-          };
+        setupDragSpot();
       })();
     </script>
+
 
   </body>
 </html>
