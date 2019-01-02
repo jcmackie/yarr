@@ -3,10 +3,8 @@ const fs = require('fs');
 // Load the shell module from electron so that we can open files
 const {shell} = require('electron');
 
-// Load TMDB library so we can query TMBD!
-// https://github.com/cavestri/themoviedb-javascript-library/
-const tmdb = require('themoviedb-javascript-library');
-let tmdbApiKey = "";
+// Load our tvMetadata library
+const tvMetadata = require('./tvMetadata');
 
 function setupDragSpot(){
   var holder = document.getElementById('drag-file');
@@ -25,7 +23,6 @@ function setupDragSpot(){
 
   holder.ondrop = (e) => {
       e.preventDefault();
-
 
       // Our list of file names
       var fileList = [];
@@ -48,6 +45,8 @@ function displayFileList(fileList){
   for (let p of parsedShowList) {
       document.getElementById('display-files').innerHTML += `<li><span class="fa fa-file"></span> ${p.filename}<ul><li><span class="fa fa-tv"></span> ${p.showName}</li><li><span class="fa fa-hashtag"> ${p.episode}</li></ul></li>`;
   }
+
+  tvMetadata.getTvEpisodeMetadata(parsedShowList)
 
 }
 
@@ -73,18 +72,6 @@ function parseFilenames(file_list){
     let parsedFile = {'filename': file, 'showName': tvShowWithWhitespace, 'episode': episodeMatch[0]}
 
     parsedList.push(parsedFile);
-
-    console.log(`Found tv show ${tvShowWithWhitespace} with episode number ${episodeMatch[0]}`);
-    console.log(`Searching tmdb`);
-    searchTmdb(tvShowWithWhitespace);
   }
-
   return parsedList;
-}
-
-function searchTmdb(query){
-  query = 'terrace house';
-  let tmdbQuery = {'query': query};
-  tmdb.common.api_key = tmdbApiKey;
-  tmdb.search.getTv(tmdbQuery, function(data){console.log(`Success: ${data}`)},  function(data){console.log(`Error: ${data}`)});
 }
