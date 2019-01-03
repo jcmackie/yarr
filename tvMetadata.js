@@ -3,15 +3,27 @@
 // https://www.npmjs.com/package/google
 const google = require('google');
 
+// Next get our local module used to scrap theTVDB
+const theTVDB = require('./thetvdb')
 
-function getTvEpisodeMetadata(parsedList){
-  parsedList.forEach(episode => {
-    console.log(`Found tv show ${episode.showName} with episode number ${episode.episode}`);
-    console.log(`Searching Google`);
+
+function getTvEpisodeMetadata(parsedShowList){
+  for (let parsedShow in parsedShowList) {
+    var parsedShowMetaDataUrl = ""
+    // First find the show if it exists on TheTVDB
     // Call the searchGoogle function and supply a 'callback' function which will get called when the search completes
     // Did I mention I hate javascript?
-    searchGoogle(episode.showName, firstResultUrl => { console.log(firstResultUrl)} );
-  });
+    console.log("Searching Google for TV show named " + parsedShow);
+    searchGoogle(parsedShow, firstResultUrl => { parsedShowMetaDataUrl = firstResultUrl});
+
+    if (parsedShowMetaDataUrl == "") {
+      console.log("empty parsedShowMetaDataUrl")
+      break
+    }
+    parsedShowList[parsedShow]['episodeList'].forEach(parsedEpisode => {
+      theTVDB.getTvEpisodeMetadata(parsedEpisode, parsedShowMetaDataUrl)
+    })  
+  };
 }
 
 
@@ -22,7 +34,8 @@ function searchGoogle(query, callback){
     google.resultsPerPage = 10
     
     google(query + "site:www.thetvdb.com", function (err, res){
-      if (err) console.error(err)
+      if (err) console.log("Error searching Google: " + err)
+      if (res.links.length == 0) console.log("No results found for query: " + query)
       
       /*
       for (var i = 0; i < res.links.length; ++i) {
