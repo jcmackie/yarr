@@ -47,14 +47,30 @@ function displayShowList(fileList){
   for (let tvShow in parsedShowList) {
     document.getElementById('display-shows').innerHTML += `<li><span class="fa fa-tv"></span> ${tvShow}<ul id="display-episodes: ${tvShow}"></ul></li>`;
     for (let episode of parsedShowList[tvShow]['episodeList']){
-        document.getElementById("display-episodes: " + tvShow).innerHTML += `<li><span class="fa fa-file"></span> ${episode.filename}(<span class="fa fa-list-alt"> Season ${episode.season} <span class="fa fa-hashtag"> Episode ${episode.episode})</li>`
+      document.getElementById("display-episodes: " + tvShow).innerHTML += `<li><span class="fa fa-file"></span> ${episode.filename}(<span class="fa fa-list-alt"> Season ${episode.season} <span class="fa fa-hashtag"> Episode ${episode.episode})</li>`
+      // Gather the show metadata via a google lookup, then scrapping theTVDB website
+      tvMetadata.getTvEpisodeMetadata(tvShow, episode)
     }
   }
-
-  tvMetadata.getTvEpisodeMetadata(parsedShowList)
-
 }
 
+/* 
+Return a object with details that have been parsed from the filename.
+The structure looks like this:
+{
+  'TecchanHouse Terrace House Boys x Girls next door': {
+    'episodeList': [
+      { 
+        'filename': '[TecchanHouse]_Terrace.House.Boys.x.Girls.next.door.S08E11.Week98.720p.mkv',
+        'season': 8,
+        'episode': 11
+      }
+      ...
+    ]
+  },
+  ...
+}
+*/
 function parseFilenames(file_list){
   // We will pack the parsed file list into a list of objects
   var parsedList = {};
