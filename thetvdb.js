@@ -17,8 +17,8 @@ function getTvEpisodeMetadata(url, season, episode) {
     // and then take the response text and convert into JSSoup
     .then( responseText => {
       let metaDataSoup = new JSSoup(responseText)
-      episodeTitle = processSoup(metaDataSoup, season, episode)
-      resolve(episodeTitle)
+      episodeInfo = processSoup(metaDataSoup, season, episode)
+      resolve(episodeInfo)
     })
   })
 }
@@ -26,8 +26,13 @@ function getTvEpisodeMetadata(url, season, episode) {
 function processSoup(soup, season, episode) {
   //let season_details = soup.find(string='Season ' + season).parent.next_sibling.next_sibling
   episode_id = 'S' + season + 'E' + episode
-  let episode_details = soup.find(name='span', undefined, string=episode_id).nextElement.nextElement.text.trim()
-  return episode_details
+  let episode_name = soup.find(name='span', undefined, string=episode_id).nextElement.nextElement.text.trim()
+  let show_name = soup.find(name='div', "crumbs").nextElement.nextElement.nextElement.nextElement.nextElement.nextElement.nextElement.text.trim()
+  return {
+    "episode_name": episode_name,
+    "episode_id": episode_id,
+    "show_name": show_name
+  }
 }
 
 exports.getTvEpisodeMetadata = getTvEpisodeMetadata

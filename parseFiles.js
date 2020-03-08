@@ -6,6 +6,7 @@ The structure looks like this:
     'episodeList': [
       { 
         'filename': '[TecchanHouse]_Terrace.House.Boys.x.Girls.next.door.S08E11.Week98.720p.mkv',
+        'ext': 'mkv',
         'season': 8,
         'episode': 11
       }
@@ -20,20 +21,26 @@ function parseFilenames(file_list){
     var parsedList = {};
     
     for (let file of file_list) {
-      console.log(file);
       // First get the episode details
       
-      parsedEpisode = parseEpisode(file)
+      parsedEpisode = parseEpisode(file.name)
   
-      tvShowWithWhitespace = parseShowName(file)
+      tvShowWithWhitespace = parseShowName(file.name)
   
       // Make sure there is an object in the parsedList that contains our tv show
       if (!(tvShowWithWhitespace in parsedList)){
           parsedList[tvShowWithWhitespace] = {'episodeList': []}
       }
   
-      // Populate the episodeList for this tv show
-      let parsedFile = {'filename': file, 'season': parsedEpisode['season'],  'episode': parsedEpisode['episode']}
+      // Populate the information for this file
+      let parsedFile = {
+        'filename': file.name,
+        'path': file.path,
+        // Just a dumb way of trying to find the extension of the file (we need to preserve that)
+        'ext': file.name.substring(file.name.lastIndexOf('.') + 1),
+        'season': parsedEpisode['season'],
+        'episode': parsedEpisode['episode']
+      }
   
       parsedList[tvShowWithWhitespace]['episodeList'].push(parsedFile);
     }

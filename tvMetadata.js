@@ -15,7 +15,27 @@ function getTvEpisodeMetadata(tvShowName, season, episode){
       .then( result => {
         resolve(result)
       })
-      .catch( failure => console.error(failure))
+      .catch( failure => {
+        // If we failed because there were not results, let's try again but without the first word
+        // in the query. This is a dumb heuristic based on the fact that I've noticed a lot
+        // of groups like to prepend their files with their name
+        // I know there will be a much better way to do this, but I am just trying to get it working.
+        console.error(failure)
+        if (failure.startsWith("No results found for query")) {
+
+          //choppedTvShowName = tvShowName.substr(tvShowName.indexOf(" ") + 1);
+          choppedTvShowName = tvShowName.substr(13);
+          console.log("Trying one more time minus one word from the start: "+ choppedTvShowName)
+          searchGoogle(choppedTvShowName)
+            .then( result => theTVDB.getTvEpisodeMetadata(result, season, episode))
+            .then( result => {
+              resolve(result)
+            })
+            .catch( failure => {
+              console.error(failure)
+            })
+        }
+      })
   })
 }
 
