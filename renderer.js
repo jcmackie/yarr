@@ -1,6 +1,3 @@
-// Load the FS module to interact with the file system
-const fs = require('fs');
-
 // Load our file manipulation library
 const changeFiles = require('./changeFiles.js');
 
@@ -80,15 +77,24 @@ function displayShowList(fileList){
       tvMetadata.getTvEpisodeMetadata(parsedShow, parsedEpisode.season, parsedEpisode.episode)
         .then(results => {
           document.getElementById("display-episodes: " + parsedShow).querySelector("#episode-name").innerHTML = "Name: " + results.episode_name
-          document.getElementById("display-episodes: " + parsedShow).querySelector("#new-filename").innerHTML = "New filename: " + results.show_name + " " + results.episode_id + " - " + results.episode_name + "." + parsedEpisode.ext
-          // Now let's change the button so that it actually calls the renameFile function
+
+          // Display the new file name we will rename it to, and sanitize for filename suitability
+          newFilename = changeFiles.sanitizeFilename(results.show_name) + " "
+            + results.episode_id + " - "
+            + changeFiles.sanitizeFilename(results.episode_name) + "."
+            + parsedEpisode.ext
+          document.getElementById("display-episodes: " + parsedShow).querySelector("#new-filename").innerHTML = "New filename: " + newFilename
+
+          // Now let's change the button so that it actually calls the renameFile function when clicked
+          // Also, the addEventListener function has to be a reference or an anonymous function declaration.
+          // You cannot use 'renameFile(oldFile, newFile) as the parameter because JS will execute it straight away.
           document.getElementById("display-episodes: " + parsedShow).querySelector("#rename-button")
+            .addEventListener('click', function(){ changeFiles.renameFile(parsedEpisode.path, newFilename) });
+          document.getElementById("display-episodes: " + parsedShow).querySelector("#rename-button").querySelector("span").style = "color:black"
 
         })
     }
   }
-  
-
 }
 
 
