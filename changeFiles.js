@@ -9,9 +9,6 @@ const {shell} = require('electron');
 
 
 function renameFile(oldFilePath, newFilename) {
-    //test
-    newFilename = "boop.txt"
-
     // We're going to assume for now that the renamed files go in the same directory
     newFilePath = path.join(path.dirname(oldFilePath), newFilename)
 
@@ -22,23 +19,32 @@ function renameFile(oldFilePath, newFilename) {
 }
 
 
-// For the sake of being safe with filenames let's convert all non-alphanumeric,
-// non-space, non-hypen, non-underscore characters to empty string. However for certain
-// character we want an explicit conversion, the 'convertMap' holds the mapping for those
-// cases
+// For the sake of being safe with filenames we want to sanitize any data we've been given
+// from the internet. We'll do this in a few passes:
+// First pass is to convert or remove any HTML encoded entities that we received.
+// Second pass to convert or remove any  non-alphanumeric, non-space, non-hypen, non-underscore 
+// characters.
+// For certain characters or entities we want an explicit conversion, the 'convertMap's holds
+// the mapping for those cases.
 function sanitizeFilename(filename) {
-    console.log(filename)
-    convertMap = {
-        "×": "x",
-        ":": "-",
-        " ": " ",
-        "-": "-"
+    entityConvertMap = {
+        "&times;": "x",
     }
-    newFilename = filename.replace(/[\W]+/g, function(replaceChar){
-        // if our convertMap has an option use it, otherwise empty string
-        return convertMap[replaceChar] === undefined ? "" : convertMap[replaceChar]
-        } )
-    console.log(newFilename)
+    characterConvertMap = {
+        ":": "-",
+    }
+    newFilename = filename
+        // First pass
+        .replace(/&\w+;/g, function(replaceEntity){
+            // if our convert map has an option use it, otherwise hyphen
+            return entityConvertMap[replaceEntity] === undefined ? "-" : entityConvertMap[replaceEntity]
+        })
+        // Second pass
+        .replace(/[^\w -]{1}/g, function(replaceChar){
+            // if our convert map has an option use it, otherwise a litteral space
+            return characterConvertMap[replaceChar] === undefined ? " " : characterConvertMap[replaceChar]
+        })
+
     return newFilename
 }
 
