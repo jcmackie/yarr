@@ -55,7 +55,7 @@ function displayShowList(fileList){
     for (let parsedEpisode of parsedShowList[parsedShow]['episodeList']){
       document.getElementById("display-episodes: " + parsedShow).innerHTML += 
         `
-        <li><span class="fa fa-file">File: ${parsedEpisode.filename}</span>
+        <li id="episode-file: ${parsedEpisode.filename}"><span class="fa fa-file">File: ${parsedEpisode.filename}</span>
           <ul>
             <li>
               <span class="fa fa-list-alt"> Season ${parsedEpisode.season}</span> 
@@ -76,21 +76,23 @@ function displayShowList(fileList){
     for (let parsedEpisode of parsedShowList[parsedShow]['episodeList']){
       tvMetadata.getTvEpisodeMetadata(parsedShow, parsedEpisode.season, parsedEpisode.episode)
         .then(results => {
-          document.getElementById("display-episodes: " + parsedShow).querySelector("#episode-name").innerHTML = "Name: " + results.episode_name
+          document.getElementById("episode-file: " + parsedEpisode.filename).querySelector("#episode-name").innerHTML = "Name: " + results.episode_name
+
+          console.log(parsedEpisode)
 
           // Display the new file name we will rename it to, and sanitize for filename suitability
-          newFilename = changeFiles.sanitizeFilename(results.show_name) + " "
+          parsedEpisode.newFilename = changeFiles.sanitizeFilename(results.show_name) + " "
             + results.episode_id + " - "
             + changeFiles.sanitizeFilename(results.episode_name) + "."
             + parsedEpisode.ext
-          document.getElementById("display-episodes: " + parsedShow).querySelector("#new-filename").innerHTML = "New filename: " + newFilename
+          document.getElementById("episode-file: " + parsedEpisode.filename).querySelector("#new-filename").innerHTML = "New filename: " + parsedEpisode.newFilename
 
           // Now let's change the button so that it actually calls the renameFile function when clicked
           // Also, the addEventListener function has to be a reference or an anonymous function declaration.
           // You cannot use 'renameFile(oldFile, newFile) as the parameter because JS will execute it straight away.
-          document.getElementById("display-episodes: " + parsedShow).querySelector("#rename-button")
-            .addEventListener('click', function(){ changeFiles.renameFile(parsedEpisode.path, newFilename) });
-          document.getElementById("display-episodes: " + parsedShow).querySelector("#rename-button").querySelector("span").style = "color:black"
+          document.getElementById("episode-file: " + parsedEpisode.filename).querySelector("#rename-button")
+            .addEventListener('click', function(){ changeFiles.renameFile(parsedEpisode.path, parsedEpisode.newFilename) });
+          document.getElementById("episode-file: " + parsedEpisode.filename).querySelector("#rename-button").querySelector("span").style = "color:black"
 
         })
     }
