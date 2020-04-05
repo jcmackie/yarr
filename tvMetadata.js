@@ -16,11 +16,11 @@ function getTvEpisodeMetadata(tvShowName, season, episode){
         resolve(result)
       })
       .catch( failure => {
-        // If we failed because there were not results, let's try again but without the first word
+        // If we failed because there were no results, let's try again but without the first word
         // in the query. This is a dumb heuristic based on the fact that I've noticed a lot
         // of groups like to prepend their files with their name
         // I know there will be a much better way to do this, but I am just trying to get it working.
-        console.error(failure)
+        console.error("Failed to get result from google (first pass): " + failure)
         if (failure.startsWith("No results found for query")) {
 
           //choppedTvShowName = tvShowName.substr(tvShowName.indexOf(" ") + 1);
@@ -44,7 +44,7 @@ function searchGoogle(query){
   // OMG promises. I need to learn to wrap my head around Promises and Callbacks before I can tackle async/await
   return new Promise((resolve, reject) => {
     // I hate javascript
-    query = query + "site:www.thetvdb.com"
+    query = query + " site:www.thetvdb.com"
     
     // Search Google and wait for the results
     googleIt({'query': query, 'limit': 1})
@@ -52,20 +52,24 @@ function searchGoogle(query){
         if (results.length == 0) {
           reject("No results found for query: " + query)
         } else {
+          console.log(query)
+          console.log(results)
+
           // A regex to find the 'base' address of the searched for series in the tvdb
-          let tvdbRegex = /(https:\/\/www\.thetvdb\.com\/series\/[\w-]+\/).*/gm;
+          let tvdbRegex = /(https:\/\/(www\.)?thetvdb\.com\/series\/[\w-]+).*/gm;
 
           // Apply our tvdbRegex and pick the first group [1]
           let firstResultUrl = tvdbRegex.exec(results[0].link)[1]
   
           // We know that we don't want the base URL, but the 'all' seasons url
-          firstResultUrl = firstResultUrl + 'seasons/all'
+          firstResultUrl = firstResultUrl + '/seasons/all'
   
           // Resolve our promise with the url of the first result
           resolve(firstResultUrl)
         }
       })
       .catch(err => {
+        console.error("Error performing Google search: " + err)
         reject(err)
       })
   })
