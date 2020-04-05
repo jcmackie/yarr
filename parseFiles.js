@@ -16,6 +16,11 @@ The structure looks like this:
   ...
 }
 */
+
+// The regex we use to find epside details
+const episodeRegex = 'S(\\d{1,2})\\s*E(\\d{1,2})';
+
+
 function parseFilenames(file_list){
     // We will pack the parsed file list into a list of objects
     var parsedList = {};
@@ -48,32 +53,28 @@ function parseFilenames(file_list){
   }
   
   function parseEpisode(fileName){
-      // The regex we use to try and find the episode number details
-      let episodeRegex = 'S(\\d{1,2})E(\\d{1,2})';
-  
       let episodeMatch = fileName.match(episodeRegex);
       if (episodeMatch == null) {
-        console.error(`No episode details found for: ${file}`);
+        console.error(`No episode details (season number or episode number) found for: ${fileName}`);
         return null
       }
+
       let parsedEpisode = {'season': episodeMatch[1].padStart(2,'0'), 'episode': episodeMatch[2].padStart(2,'0')}
       return parsedEpisode
   }
   
   function parseShowName(fileName){
-      // The regex we use to try and find the episode number details
-      // We use this to separate the showname from the episode details which usually follow it
-      let episodeRegex = 'S(\\d{1,2})E(\\d{1,2})';
-  
       // There's probably much better ways of doing this, but it's what I came up with when doodling
       // around with Javascripts regex functions. Better to get something down and iterate.
+
+      // We use the episodeRegex to find the episode details in the file name, and the use everything before that.
       let episodematch = fileName.match(episodeRegex)
       let tvShow = fileName.slice(0, episodematch['index'])
   
       // Remove any non alphanumeric characters
       let tvShowWithWhitespace = tvShow.replace(/[\W_]+/g, " ");
   
-      return tvShowWithWhitespace
+      return tvShowWithWhitespace.trim()
   
   }
 
