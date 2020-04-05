@@ -47,7 +47,7 @@ function searchGoogle(query){
     query = query + " site:www.thetvdb.com"
     
     // Search Google and wait for the results
-    googleIt({'query': query, 'limit': 1})
+    googleIt({'query': query, 'limit': 1, 'diagnostics': true})
       .then(results => {
         if (results.length == 0) {
           reject("No results found for query: " + query)
@@ -58,14 +58,21 @@ function searchGoogle(query){
           // A regex to find the 'base' address of the searched for series in the tvdb
           let tvdbRegex = /(https:\/\/(www\.)?thetvdb\.com\/series\/[\w-]+).*/gm;
 
-          // Apply our tvdbRegex and pick the first group [1]
-          let firstResultUrl = tvdbRegex.exec(results[0].link)[1]
+          // Find the first link that matches our Regex and then pick the first group [1]
+          for (let result in results) {
+            let parsedResultLink = tvdbRegex.exec(results[0].link)
+            // If the regex matched and we have a subgroup, exit out of the loop.
+            if (Array.isArray(parsedResultLink)) {
+              matchingUrl = parsedResultLink[1]
+
+            }
+          }
   
           // We know that we don't want the base URL, but the 'all' seasons url
-          firstResultUrl = firstResultUrl + '/seasons/all'
+          matchingUrl = matchingUrl + '/seasons/all'
   
           // Resolve our promise with the url of the first result
-          resolve(firstResultUrl)
+          resolve(matchingUrl)
         }
       })
       .catch(err => {

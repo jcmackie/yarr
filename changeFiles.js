@@ -29,6 +29,7 @@ function renameFile(oldFilePath, newFilename) {
 function sanitizeFilename(filename) {
     entityConvertMap = {
         "&times;": "x",
+        "&hellip;": "..."
     }
     characterConvertMap = {
         ":": "-",
@@ -40,7 +41,7 @@ function sanitizeFilename(filename) {
             return entityConvertMap[replaceEntity] === undefined ? "-" : entityConvertMap[replaceEntity]
         })
         // Second pass
-        .replace(/[^\w -]{1}/g, function(replaceChar){
+        .replace(/[^\w -.,]{1}/g, function(replaceChar){
             // if our convert map has an option use it, otherwise a litteral space
             return characterConvertMap[replaceChar] === undefined ? " " : characterConvertMap[replaceChar]
         })
