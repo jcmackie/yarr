@@ -23,3 +23,8 @@ To run Yarr
 ```
 $ npm start
 ```
+
+## License
+Currently licensed using GPLv2. I'm happy to accept pull requests especially from all the JS gurus out there.
+
+If you want to change the license then message me to have a discussion about it.
