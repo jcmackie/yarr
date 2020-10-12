@@ -51,7 +51,7 @@ function getShowMetadata (showName) {
         // I know there will be a much better way to do this, but I am just trying to get it working.
         console.error('Failed to get result from google (first pass): ' + failure)
         if (failure.startsWith('No results found for query')) {
-          let choppedShowName = showName.substr(13)
+          const choppedShowName = showName.substr(13)
           console.log('Trying one more time minus one word from the start: ' + choppedShowName)
           searchGoogle(choppedShowName)
             .then(tvShowMetadataURL => theTVDB.getMetadataFromSource(tvShowMetadataURL))
@@ -73,13 +73,13 @@ function searchGoogle (query) {
     query = query + ' site:www.thetvdb.com/series'
 
     // Search Google and wait for the results
-    googleIt({'query': query, 'limit': 1})
+    googleIt({ query: query, limit: 1 })
       .then(results => {
         if (results.length === 0) {
           reject('No results found for query: ' + query)
         } else {
           // A regex to find the 'base' address of the searched for series in the tvdb
-          let tvdbRegex = /(https:\/\/(www\.)?thetvdb\.com\/series\/[\w-]+).*/gm;
+          const tvdbRegex = /(https:\/\/(www\.)?thetvdb\.com\/series\/[\w-]+).*/gm
 
           // Find the first link that matches our Regex and then pick the first group [1]
           let parsedResultLink = tvdbRegex.exec(results[0].link)[1]

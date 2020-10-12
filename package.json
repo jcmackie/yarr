@@ -14,10 +14,10 @@
   "author": "jc.mackie@gmail.com",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^7.2.4",
+    "electron": "^7.3.3",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1"
@@ -25,7 +25,7 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "font-awesome": "^4.7.0",
-    "google-it": "^1.5.0",
+    "google-it": "^1.5.2",
     "jssoup": "0.0.10",
     "r2": "^2.0.1"
   }

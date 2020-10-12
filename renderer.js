@@ -103,7 +103,6 @@ function displayShowList (fileList) {
       .then(showMetadata => {
         for (const parsedEpisode of parsedShowList[parsedShow].episodeList) {
           // Go through the placeholder created above and fill in the episode info as we get it
-          console.log("breakpoint?")
           document
             .getElementById('episode-file: ' + parsedEpisode.filename)
             .querySelector('#episode-name').innerHTML = 'Name: ' + showMetadata[parsedEpisode.episodeId]

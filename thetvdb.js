@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /*
 Yarr is an Electron program used to try and rename files using metadata
 scrapped from the internet.
@@ -77,116 +78,115 @@ exports.getMetadataFromSource = getMetadataFromSource
 // so we are going to provide that functionality by overriding
 // the function (if we can). Extremely experimental. We'll be copying the whole of the
 // SoupStrainer class, and overwriting the findAll function of JSSoup
-JSSoup.prototype.findAll = function (name=undefined, attrs=undefined, string=undefined) {
-  var results = [];
-  var strainer = new SoupStrainer2(name, attrs, string);
+JSSoup.prototype.findAll = function (name = undefined, attrs = undefined, string = undefined) {
+  var results = []
+  var strainer = new SoupStrainer2(name, attrs, string)
 
-  var descendants = this.descendants;
+  var descendants = this.descendants
   for (var i = 0; i < descendants.length; ++i) {
     if (descendants[i] instanceof JSSoup.__proto__) {
-      var tag = strainer.match(descendants[i]);
+      var tag = strainer.match(descendants[i])
       if (tag) {
-        results.push(tag);
+        results.push(tag)
       }
     }
   }
 
-  return results;
+  return results
 }
 
 class SoupStrainer2 {
-  constructor(name, attrs, string) {
-    if (typeof attrs == 'string') {
-      attrs = {class: [attrs]};
+  constructor (name, attrs, string) {
+    if (typeof attrs === 'string') {
+      attrs = { class: [attrs] }
     } else if (Array.isArray(attrs)) {
-      attrs = {class: attrs};
-    } else if (attrs && attrs.class && typeof attrs.class == 'string') {
-      attrs.class = [attrs.class];
+      attrs = { class: attrs }
+    } else if (attrs && attrs.class && typeof attrs.class === 'string') {
+      attrs.class = [attrs.class]
     }
     if (attrs && attrs.class) {
       for (var i = 0; i < attrs.class.length; ++i) {
-        attrs.class[i] = attrs.class[i].trim();
+        attrs.class[i] = attrs.class[i].trim()
       }
     }
-    this.name = name;
-    this.attrs = attrs;
-    this.string = string;
+    this.name = name
+    this.attrs = attrs
+    this.string = string
   }
 
-  match(tag) {
+  match (tag) {
     // match string
     if (this.name == undefined && this.attrs == undefined) {
       if (this.string && tag.string) {
         if (this._matchName(tag.string, this.string)) {
-          return tag.string;
+          return tag.string
         } else {
-          return null;
+          return null
         }
       }
-      return tag;
+      return tag
     }
     // match tag name
-    var match = this._matchName(tag.name, this.name);
-    if (!match) return null;
+    var match = this._matchName(tag.name, this.name)
+    if (!match) return null
     // match string
-    match = this._matchName(tag.string, this.string);
-    if (!match) return null;
+    match = this._matchName(tag.string, this.string)
+    if (!match) return null
     // match attributes
-    if (typeof this.attrs == 'object') {
+    if (typeof this.attrs === 'object') {
       if (!this._isEmptyObject(this.attrs)) {
-        var props = Object.getOwnPropertyNames(this.attrs);
-        var found = false;
+        var props = Object.getOwnPropertyNames(this.attrs)
+        var found = false
         for (var i = 0; i < props.length; ++i) {
           if (props[i] in tag.attrs && this._matchAttrs(props[i], tag.attrs[props[i]], this.attrs[props[i]])) {
-            found = true;
-            break;
+            found = true
+            break
           }
         }
-        if (!found) return null;
+        if (!found) return null
       }
     }
-    return tag;
+    return tag
   }
 
-  _matchName(tagItem, name) {
+  _matchName (tagItem, name) {
     // if name is undefined or empty, then we'll treat it as a wildcard and return true
-    if (name == undefined || name == null) return true;
+    if (name == undefined || name == null) return true
     // if tagItem is undefined or null, and name is not then we'll treat it as not matching
-    if (tagItem == undefined || tagItem == null) return false;
+    if (tagItem == undefined || tagItem == null) return false
     // if name is an array, then tag match any item in this array is a match.
     if (Array.isArray(name)) {
       for (var i = 0; i < name.length; ++i) {
-        var match = this._matchName(tagItem, name[i]);
-        if (match) return true;
+        var match = this._matchName(tagItem, name[i])
+        if (match) return true
       }
-      return false;
+      return false
     }
     // if name is a RegExp see if the tag item matches it
     if (name instanceof RegExp) {
       return tagItem.toString().match(name)
     }
-    return tagItem == name;
+    return tagItem == name
   }
 
-  _matchAttrs(name, candidateAttrs, attrs) {
-    if (typeof candidateAttrs == 'string') {
+  _matchAttrs (name, candidateAttrs, attrs) {
+    if (typeof candidateAttrs === 'string') {
       if (name == 'class') {
-        candidateAttrs = candidateAttrs.replace(/\s\s+/g, ' ').trim().split(' ');
+        candidateAttrs = candidateAttrs.replace(/\s\s+/g, ' ').trim().split(' ')
       } else {
-        candidateAttrs = [candidateAttrs];
+        candidateAttrs = [candidateAttrs]
       }
     }
-    if (typeof attrs == 'string') {
-      attrs = [attrs];
+    if (typeof attrs === 'string') {
+      attrs = [attrs]
     }
     for (var i = 0; i < attrs.length; ++i) {
-      if (candidateAttrs.indexOf(attrs[i]) < 0)
-        return false;
+      if (candidateAttrs.indexOf(attrs[i]) < 0) { return false }
     }
-    return true;
+    return true
   }
 
-  _isEmptyObject(obj) {
-    return Object.keys(obj).length == 0;
+  _isEmptyObject (obj) {
+    return Object.keys(obj).length == 0
   }
 }
