@@ -14,7 +14,7 @@
   "author": "jc.mackie@gmail.com",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^7.3.3",
+    "electron": "^13.6.6",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.1",
